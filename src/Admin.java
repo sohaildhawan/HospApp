@@ -8,6 +8,8 @@
  *
  * @author FINMAL
  */
+
+//Can you see this?
 public class Admin extends javax.swing.JFrame {
 
     /**
