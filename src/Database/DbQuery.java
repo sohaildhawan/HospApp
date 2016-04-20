@@ -24,13 +24,9 @@ public class DbQuery {
     
     public int PatientSearch(String id) throws SQLException{
         con = db.getConnection();
-        int count = 0;
         String str = "select * from patients where pid like '"+ id +"'";
         pstmt=con.prepareStatement(str);
-        rs = pstmt.executeQuery();
-        while(rs.next()){
-               count = 1;
-            }
+        int count = pstmt.executeUpdate();
         return count;
     }
     
