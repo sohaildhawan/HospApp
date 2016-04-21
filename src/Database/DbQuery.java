@@ -24,7 +24,7 @@ public class DbQuery {
     
     public int PatientSearch(String id) throws SQLException{
         con = db.getConnection();
-        String str = "select * from patients where pid like '"+ id +"'";
+        String str = "select * from patients where patientID like '"+ id +"'";
         pstmt=con.prepareStatement(str);
         int count = pstmt.executeUpdate();
         return count;
@@ -37,7 +37,7 @@ public class DbQuery {
         String g = null;
         con = db.getConnection();
         int count = 0;
-        String str = "select CONCAT(fname, ' ', lname) as name, occupation, dob, gender from patients where pid like '"+ id +"'";
+        String str = "select CONCAT(fname, ' ', lname) as name, occupation, dob, gender from patients where patientID like '"+ id +"'";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         while(rs.next()){
@@ -52,7 +52,7 @@ public class DbQuery {
     public String price(int id) throws SQLException{
         String price = null;
         con = db.getConnection();
-        String str = "select price from priceTable where itemId like '"+ id +"'";
+        String str = "select price from itemPrice where itemiId like '"+ id +"'";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         while(rs.next()){
