@@ -46,7 +46,7 @@ public class Recieption extends javax.swing.JFrame {
     
     public void Show() throws SQLException{
         con = db.getConnection();
-        String str =  "select CONCAT(fname, ' ' ,lname) as name, room from presentdoctors";
+        String str =  "select CONCAT(fname, ' ' ,lname) as name from staffs where staffid in (select staffid from presentDoctors)";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         AvailableDoctable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -618,7 +618,7 @@ public class Recieption extends javax.swing.JFrame {
                 DbInsert di = new DbInsert();
                 di.NewPatient(fname.getText(), lname.getText(), bloodg.getText(), dob.getText(), address.getText(),
                         buttonGroup1.getSelection().getActionCommand(), pnumber.getText(), occupation.getText(),
-                        nok.getText(), knowns.getText(), other.getText(), FileNumber.getText(), image.getIcon().toString());
+                        other.getText(), FileNumber.getText());
             } catch (SQLException ex) {
                 Logger.getLogger(Recieption.class.getName()).log(Level.SEVERE, null, ex);
             }
