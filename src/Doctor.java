@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import net.proteanit.sql.DbUtils;
 
@@ -29,14 +30,15 @@ public class Doctor extends javax.swing.JFrame {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     DbConnect db = new DbConnect();
-    String IdHolder;
+    int IdHolder  = 00;
+    
     
     /**
      * Creates new form Doctor
      */
     public Doctor() throws SQLException {
         initComponents();
-        ShowAdmitted();
+        //ShowAdmitted();
         ShowWaiting();
     }
     
@@ -47,7 +49,7 @@ public class Doctor extends javax.swing.JFrame {
     
     public void ShowAdmitted() throws SQLException{
         con = db.getConnection();
-        String str =  "select CONCAT(fname, ' ' ,lname) as name, room from presentdoctors";
+        String str =  "";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         AdmittedTable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -55,11 +57,16 @@ public class Doctor extends javax.swing.JFrame {
     }
     
     public void ShowWaiting() throws SQLException{
+        DefaultListModel m = new DefaultListModel();
         con = db.getConnection();
-        String str =  "select CONCAT(fname, ' ' ,lname) as name, room from presentdoctors";
+        String str =  "select patientID from waitingpatients where doctor like '"+ 00 +"' and payment like 'cleared' ";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
-        PatientTable.setModel((ListModel) rs);
+        while(rs.next()){
+            String n = rs.getString("patientID");
+            m.addElement(n);
+        }
+        PatientTable.setModel(m);
         con.close();   
     }
 
@@ -92,6 +99,11 @@ public class Doctor extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jButton5.setText("LOGOUT");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         UserIdentitylebel.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
         UserIdentitylebel.setText("FIRST NAME AND LAST NAME");
@@ -188,13 +200,13 @@ public class Doctor extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
                     .addComponent(jScrollPane2))
                 .addContainerGap())
         );
@@ -203,21 +215,27 @@ public class Doctor extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void PatientTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PatientTableMouseClicked
-        try {
+        if(!PatientTable.isSelectionEmpty()){
+            try {
             String id = PatientTable.getSelectedValue().toString();
             Patient p = new Patient();
-            p.IdHolder  = id;
+            p.IdHolder  = Integer.valueOf(id);
             p.setVisible(true);
             Doctor.this.dispose();
             close();
         } catch (SQLException ex) {
             Logger.getLogger(Doctor.class.getName()).log(Level.SEVERE, null, ex);
         }
+        }
     }//GEN-LAST:event_PatientTableMouseClicked
 
     private void AdmittedTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AdmittedTableMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_AdmittedTableMouseClicked
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
