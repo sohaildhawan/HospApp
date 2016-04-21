@@ -28,7 +28,7 @@ public class Patient extends javax.swing.JFrame {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     DbConnect db = new DbConnect();
-    String IdHolder;
+    int IdHolder = 00;
     
     /**
      * Creates new form Patient
@@ -48,8 +48,8 @@ public class Patient extends javax.swing.JFrame {
 
      public void Show() throws SQLException{
         con = db.getConnection();
-        String str =  "select date, docName, complain, advise, prescription, labTest, "
-                        + " testResult, scan, scanResult, room from patientRecord where     pid like '"+IdHolder+"' ";
+        String str =  "select dateRecord, staffID, complain, advise, prescription, labTest, "
+                        + " testResult, scan, scanReport from patientsRecord where  patientID like '"+IdHolder+"' ";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         RecordTable.setModel(DbUtils.resultSetToTableModel(rs));
@@ -59,28 +59,27 @@ public class Patient extends javax.swing.JFrame {
      public void PatientInfo() throws SQLException{
         con = db.getConnection();
         int count = 0;
-        String str = "select CONCAT(fname, ' ', lname) as name, knownSickness,  CONVERT(int,ROUND(DATEDIFF(hour,@dob,GETDATE())/8766.0,0)) AS Age"
-                        + " from patients where pid like '"+ IdHolder +"'";
+        String str = "select CONCAT(fname, ' ', lname) as name, round(((curdate() - dob)) / 365.25) AS age"
+                        + " from patients where patientID like '"+ IdHolder +"'";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         while(rs.next()){
-               ID.setText(IdHolder);
+               ID.setText(String.valueOf(IdHolder));
                NAME.setText(rs.getString("name"));
-               AGE.setText(rs.getString("occupation"));
-               KS.setText(rs.getString("knownSickness"));
+               AGE.setText(rs.getString("Age"));
             }
     }
      
      public void PatientInfo2() throws SQLException{
         con = db.getConnection();
-        String str = "SELECT top 1 complain FROM (patyientRecord GROUP BY complain ORDER BY count(*) DESC) where pid like '"+IdHolder+"' ";
+        String str = "SELECT complain FROM patientsRecord where patientID like '"+IdHolder+"' GROUP BY complain ORDER BY count(*) DESC limit 1  ";
         pstmt=con.prepareStatement(str);
         rs = pstmt.executeQuery();
         while(rs.next()){
                MC.setText(rs.getString("complain"));
             }
         
-        String st = "SELECT top 1 complain FROM (patyientRecord GROUP BY complain ORDER BY count(*) ASC) where pid like '"+IdHolder+"' ";
+        String st = "SELECT complain FROM patientsRecord where patientID like '"+IdHolder+"' GROUP BY complain ORDER BY count(*) ASC limit 1 ";
         pstmt=con.prepareStatement(st);
         rs = pstmt.executeQuery();
         while(rs.next()){
